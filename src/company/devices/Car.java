@@ -8,6 +8,8 @@ import java.util.Objects;
 public abstract class Car extends Device implements Salleable {
     String color;
 
+    
+
 
 
     public Car(String producer, String model, Double value, String color) {
