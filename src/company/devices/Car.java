@@ -1,19 +1,25 @@
 package com.company.src.company.devices;
 
+import com.company.src.company.LoggerTranzakcji;
 import com.company.src.company.creatures.Human;
 import com.company.src.company.Salleable;
+import jdk.swing.interop.SwingInterOpUtils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class Car extends Device implements Salleable {
+public abstract class Car extends Device implements Salleable, Comparable<Car> {
     String color;
 
     int rokProdukcji;
 
     List<Human> listaWlascicieliSamochodu = new ArrayList<>();
+    List<LoggerTranzakcji> loggerTranzakcji = new ArrayList<>();
+
 
 
     public int getRokProdukcji() {
@@ -28,6 +34,11 @@ public abstract class Car extends Device implements Salleable {
         super(producer, model, value);
         this.color = color;
         this.rokProdukcji = rokProdukcji;
+    }
+
+    @Override
+    public int compareTo(Car o) {
+        return this.rokProdukcji - o.rokProdukcji;
     }
 
     @Override
@@ -53,9 +64,45 @@ public abstract class Car extends Device implements Salleable {
                 '}';
     }
 
+    public boolean czyWlasciciel(Human osobaDoSprawdzenia){
+        for (Human human: listaWlascicieliSamochodu) {
+            if(human.equals(osobaDoSprawdzenia)){
+
+                System.out.println(osobaDoSprawdzenia + " była włascicielem tego pojazdu");
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean czySprzedal(Human sprzedajacy, Human kupujacy){
+        /*System.out.println(listaWlascicieliSamochodu.size() + " aktualna");*/
+        if(listaWlascicieliSamochodu.size() <= 1){
+            System.out.println("Nie ma kupujacego w liscie");            return false;
+        }
+        int indexKupujacego = listaWlascicieliSamochodu.indexOf(kupujacy);
+        Human human = listaWlascicieliSamochodu.get(indexKupujacego - 1);
+        if(sprzedajacy == human){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void pokazWlascicieliLadnie(){
+        int index = 0;
+        for (Human h : listaWlascicieliSamochodu) {
+            System.out.println("historia włascicieli["+(index+1) + " " + h.getFirstName() + " " + h.getLastName()+" ]"  );
+            index ++;
+        }
+    }
+
     @Override
    public void turnOn() {
         System.out.println("Przekręcam klucz");
+    }
+
+    public void wyswietlLiczneTranzakcjiTegoSamochodu(){
+        System.out.println("SAMOCHOD byl sprzedany " + listaWlascicieliSamochodu.size()+1);
     }
 
     /*@Override
@@ -81,6 +128,7 @@ public abstract class Car extends Device implements Salleable {
     public void sell(Human seller, Human buyer, Double price) {
         //TODO jaki samochod jest do sprzedania albo kupienia skoro nie ma o nim info
         Car[] garage = seller.getGarage();
+        Car[] garageBuyera = buyer.getGarage();
         List<Car> samochody = new ArrayList<>(Arrays.asList(garage));
         boolean tenSamochodJestUsprzedajacego = samochody.contains(this);
         int indexTegoSamochoduWTablicy = -1;
@@ -98,7 +146,7 @@ public abstract class Car extends Device implements Salleable {
         }
 
         boolean czyJestWolneMiejsce = false;
-        for (Car car:garage) {
+        for (Car car:garageBuyera) {
             if(car==null){
                 czyJestWolneMiejsce = true;
             }
@@ -129,8 +177,34 @@ public abstract class Car extends Device implements Salleable {
         buyer.setCash(buyer.getCash() - value);
         seller.setCash(seller.getCash() + value);
 
-        listaWlascicieliSamochodu.add(seller);
+        //ustawiam wlasciciela
+        if(listaWlascicieliSamochodu.size() == 0) {
+            listaWlascicieliSamochodu.add(seller);
+            listaWlascicieliSamochodu.add(buyer);
+        } else {
+
+            listaWlascicieliSamochodu.add(buyer);
+        }
+
+        //sprawdzam czy sprzedajacy jest ostatnim wlasiccielem pojazdu
+        Human ostatniSprzedajacy = listaWlascicieliSamochodu.get(listaWlascicieliSamochodu.size() - 2);
+
+
+
+        if((ostatniSprzedajacy == seller)){
+            System.out.println("Ten posiadacz jest ostatnim wlascicielem");
+        }else {
+            System.out.println("nie jest ostatnim właścicielem");
+        }
+
+        LoggerTranzakcji trazakcja = new LoggerTranzakcji(LocalDateTime.now(),buyer,seller, price);
+        loggerTranzakcji.add(trazakcja);
         System.out.println("...");
+    }
+    public void wyswietlTranzakcje(){
+        for (LoggerTranzakcji l: loggerTranzakcji) {
+            System.out.println(l.toString());
+        }
     }
 
     public List<Human> getListaWlascicieliSamochodu() {

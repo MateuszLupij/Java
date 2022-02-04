@@ -8,6 +8,8 @@ import com.company.src.company.devices.NieMiejscaWGarazu;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 
 public class Human extends Animal {
@@ -78,7 +80,7 @@ public class Human extends Animal {
     public void setCarNaPierwszymWolnymMiejscu(Car car){
         try {
             garage[znajdzPierwszeWolneMiejsceWGarazu()] = car;
-        }catch (IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e){
             throw e;
         }
     }
@@ -96,9 +98,24 @@ public class Human extends Animal {
 
     public Car[] getPosortowaneSamochody() {
         Comparator<Car> byRokProdukcji = Comparator.comparing(Car::getRokProdukcji);
-        Car[] copiaGarazu = Arrays.copyOf(garage, garage.length);
-        Arrays.sort(copiaGarazu, byRokProdukcji);
-        return copiaGarazu;
+        //Car[] copiaGarazu = Arrays.copyOf(garage, garage.length);
+        Arrays.sort(garage, new Comparator<Car>() {
+
+            @Override
+            public int compare(Car o1, Car o2) {
+                if(o1 == null && o2 == null){
+                    return 0;
+                }
+                if(o1 == null){
+                    return 1;
+                }
+                if(o2 == null){
+                    return -1;
+                }
+                return o1.compareTo(o2);
+            }
+        });
+        return garage;
     }
    /* public void setVehicle(Car vehicle) {
         if (salary > vehicle.value) {

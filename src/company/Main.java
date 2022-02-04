@@ -7,6 +7,8 @@ import com.company.src.company.devices.Electric;
 import com.company.src.company.devices.LPG;
 import com.company.src.company.devices.Phone;
 
+import java.util.Arrays;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -86,7 +88,7 @@ public class Main {
         Phone nokia = new Phone("Nokia","czerwony", 4.5, "zero","android", 2000, 100.0);
         System.out.println(nokia);
         nokia.turnOn();
-        System.out.println("========ZADANIE 8========");
+        System.out.println("...");
         Human seller = new Human(3);
         seller.setFirstName("Mateusz");
         seller.setLastName("Lupij");
@@ -112,19 +114,75 @@ public class Main {
         buyer.setCash(1000.00);
 
         System.out.println("....");
-        LPG fiat = new LPG("opel", "vectra",20.000, "silver", 1998);
+        LPG opel = new LPG("opel", "vectra",20.000, "silver", 1998);
         LPG mercedes = new LPG("Mercedes", "SA", 21.000,"BLUE",2003);
-        System.out.println("Przypisuhemy sprzedawdcy samochody");
-        seller.setCar(0,fiat);
+        System.out.println("Przypisuje sprzedawdcy samochody");
+        seller.setCar(0,opel);
         seller.setCar(1,mercedes);
         System.out.println("sprawdzamy czy są w garażu");
         System.out.println(seller);
-        System.out.println("dochodzi do transakcji - sprzedajemy mercedesa");
+        System.out.println("dochodzi do transakcji - sprzedaje mercedesa");
         mercedes.sell(seller,buyer,0.99);
         System.out.println("przed zakupem");
         System.out.println(buyer);
         System.out.println("po");
         System.out.println(seller);
+
+        System.out.println(".....");
+
+        Human Romek = new Human(2);
+        Romek.setFirstName("Romek");
+        Romek.setLastName("Wozniak");
+        Romek.setCash(2000);
+
+        mercedes.sell(buyer, Romek, 1.00);
+
+        mercedes.pokazWlascicieliLadnie();
+        //System.out.println(mercedes.czySprzedal(buyer,Romek));
+
+        Car[] garage = seller.getGarage();
+
+
+        mercedes.sell(Romek,seller, 1.0);
+        System.out.println("...");
+        mercedes.pokazWlascicieliLadnie();
+
+        System.out.println(Arrays.toString(seller.getGarage()));
+
+        opel.sell(seller,Romek, 5.0);
+        System.out.println("...");
+        opel.pokazWlascicieliLadnie();
+        System.out.println(Arrays.toString(Romek.getPosortowaneSamochody()));
+        opel.sell(Romek,seller,2.0);
+        opel.sell(seller,Romek,2.0);
+        System.out.println(Arrays.toString(seller.getPosortowaneSamochody()));
+        opel.sell(Romek,seller,2.0d);
+        System.out.println(Arrays.toString(seller.getPosortowaneSamochody()));
+        opel.pokazWlascicieliLadnie();
+
+        System.out.println("...Czy sprzedal...");
+        opel.czySprzedal(seller,Romek);
+        opel.sell(seller,buyer,2.0);
+        opel.czySprzedal(seller,buyer);
+
+        Car star = new LPG("passerati","passerati", 11.00,"czarny",2005);
+        seller.setCarNaPierwszymWolnymMiejscu(star);
+
+        star.sell(seller,Romek,2.0);
+        System.out.println("====");
+        System.out.println(star.czySprzedal(seller,Romek));
+        System.out.println("====");
+        opel.wyswietlTranzakcje();
+
+
+
+
+
+
+
+
+
+
 
 
 

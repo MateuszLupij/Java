@@ -13,7 +13,21 @@ public abstract class Device {
 
 
     }
-   public abstract void turnOn();
+
+    public String getProducer() {
+        return producer;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public Double getValue() {
+        return value;
+    }
+
+
+    public abstract void turnOn();
 
 
 }
